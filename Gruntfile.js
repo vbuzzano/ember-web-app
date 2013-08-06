@@ -13,13 +13,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
-  grunt.registerTask('default', ['jshint','build','qunit']);
-  grunt.registerTask('build', ['clean:build']);//,'html2js','concat','recess:build','copy:assets']);
-//  grunt.registerTask('release', ['clean','html2js','uglify','jshint','karma:unit','concat:index', 'recess:min','copy:assets','karma:e2e']);
-//  grunt.registerTask('test-watch', ['karma:watch']);
-
-//  grunt.registerTask('default', ['ember_handlebars','less', 'concat', 'clean', 'copy', 'connect','qunit','watch']);
-//  grunt.registerTask('release', ['ember_handlebars','less', 'concat', 'clean', 'copy', 'connect','qunit','jshint','uglify','cssmin','clean','copy']);
+  grunt.registerTask('default', ['build']);
+  grunt.registerTask('build', ['jshint','clean:beforeBuild', 'ember_handlebars', 'less', 'concat:javascript','concat:stylesheet', 'copy:build', 'clean:afterBuild']);//,'html2js','concat','recess:build','copy:assets']);
+  grunt.registerTask('test', ['clean:test','concat:test','copy:test','qunit']);
+  grunt.registerTask('run', ['default','build','test','connect','watch']);
+  grunt.registerTask('dist', ['clean:dist','build', 'test', 'uglify', 'cssmin', 'copy:dist']);
 
 	//All grunt related functions
 	grunt.initConfig({
@@ -50,12 +48,25 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			javascript: {
-				src:['vendor/jquery-1.9.1.js','vendor/handlebars-1.0.0-rc3.js','vendor/ember-1.0.0-rc2.js','vendor/bootstrap.3-rc1.js','src/app/app.js','tmp/templates.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js'],
-				dest:'dist/js/app.js'
+				src:[
+          'vendor/jquery-1.9.1.js',
+          'vendor/handlebars-1.0.0-rc3.js',
+          'vendor/ember-1.0.0-rc2.js',
+          'vendor/bootstrap.3-rc1.js',
+          'src/app/app.js',
+          'tmp/templates.js',
+          'src/app/controllers/*.js',
+          'src/app/views/*.js',
+          'src/app/routes/*.js'
+        ],
+				dest:'build/js/app.js'
 			},
-      defaultCss: {
-        src:['vendor/bootstrap.3-rc1.css','tmp/style.css'],
-        dest:'dist/css/style.css'
+      stylesheet: {
+        src:[
+          'vendor/bootstrap.3-rc1.css',
+          'tmp/style.css'
+        ],
+        dest:'build/css/style.css'
       },
 			test: {
 				src:['src/tests/*.js'],
@@ -63,7 +74,7 @@ module.exports = function(grunt) {
 			}
 		},
 		less: {
-      default: {
+      compile: {
         files: {
           "tmp/style.css":"src/less/*.less"
         }
@@ -84,35 +95,50 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-		clean:  ["tmp", "dist/img/"],
+		clean: {
+      beforeBuild: ["build", "tmp"],
+      afterBuild: ["tmp"],
+      test: ["qunit"],
+      dist: ["dist"]
+    },
 		copy: {
-			default: {
-				files: [
-					{'dist/index.html':'src/app/index.html'},
+      build: {
+        files: [
+          {'build/index.html':'src/app/index.html'},
+          {expand:true, cwd:'src/assets/img/', src: ['**'], dest: 'build/img/'}
+        ]
+      },
+      dist: {
+        files: [
+          {'dist/index.html':'build/index.html'},
+          {expand:true, cwd:'build/img/', src: ['**'], dest: 'dist/img/'}
+        ]
+      },
+      test:{
+        files: [
           {'qunit/index.html':'src/tests/index.html'},
           {'qunit/qunit-1.11.0.js':'vendor/qunit-1.11.0.js'},
-          {'qunit/qunit-1.11.0.css':'vendor/qunit-1.11.0.css'},
-          {expand:true, cwd:'src/assets/img/', src: ['**'], dest: 'dist/img/'}
-				]
-			}
+          {'qunit/qunit-1.11.0.css':'vendor/qunit-1.11.0.css'}
+        ]
+      }
 		},
 		uglify: {
-			build: {
-				src: 'dist/js/app.js',
-				dest:'release/js/app.min.js'
+			dist: {
+				src: 'build/js/app.js',
+				dest:'dist/js/app.min.js'
 			}
 		},
 		cssmin: {
 			compress: {
 				files: {
-					"release/css/app.min.css":["dist/css/style.css"]
+					"dist/css/app.min.css":["build/css/style.css"]
 				}
 			}
 		},
 		watch: {
 			scripts: {
 				files: ['vendor/*.js','src/app/*.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js','src/less/*.less','src/app/templates/*.hbs', 'src/tests/*.js'],
-				tasks: ['jshint','ember_handlebars', 'less', 'concat','qunit'],
+				tasks: ['jshint','ember_handlebars', 'less', 'concat', 'copy', 'clean:afterBuild', 'test'],
 				options: {
 					debounceDelay:300
 				}
@@ -129,10 +155,10 @@ module.exports = function(grunt) {
 			all: ['qunit/index.html']
 		},
 		connect: {
-			default: {
+			debug: {
 				options: {
 					port:9090,
-					base:'dist'
+					base:'build'
 				}
 			},
 			test: {
