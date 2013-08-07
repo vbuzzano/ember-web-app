@@ -13,16 +13,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
-  grunt.registerTask('default', ['build']);
-  grunt.registerTask('build', ['jshint','clean:beforeBuild', 'ember_handlebars', 'less', 'concat:javascript','concat:stylesheet', 'copy:build', 'clean:afterBuild']);//,'html2js','concat','recess:build','copy:assets']);
+  grunt.registerTask('default', ['clean:beforeBuild','build']);
+  grunt.registerTask('build', ['jshint', 'ember_handlebars', 'less', 'concat:javascript','concat:stylesheet', 'copy:build', 'clean:afterBuild']);//,'html2js','concat','recess:build','copy:assets']);
   grunt.registerTask('test', ['clean:test','concat:test','copy:test','qunit']);
-  grunt.registerTask('run', ['default','build','test','connect','watch']);
-  grunt.registerTask('dist', ['clean:dist','build', 'test', 'uglify', 'cssmin', 'copy:dist']);
+  grunt.registerTask('run', ['default','test','connect','watch']);
+  grunt.registerTask('dist', ['clean:dist','default', 'test', 'uglify', 'cssmin', 'copy:dist']);
 
 	//All grunt related functions
 	grunt.initConfig({
 		jshint: {
-			files: ['gruntfile.js', 'src/app/controllers/*.js','src/app/*.js','src/app/views/*.js','src/app/routes/*.js'],
+			files: ['gruntfile.js', 'src/app/models/*.js','src/app/controllers/*.js','src/app/*.js','src/app/views/*.js','src/app/routes/*.js'],
 			options: {
         curly:true,
 				eqeqeq:true,
@@ -35,6 +35,7 @@ module.exports = function(grunt) {
         sub:true,
         boss:true,
 				globals: {
+          alert:true,
 					force:true,
 					jQuery: true,
 					console:true,
@@ -42,22 +43,25 @@ module.exports = function(grunt) {
 					document:true,
 					Ember:true,
 					$:true,
-					App:true
+					App:true,
+          DS:true
 				}
 			}
 		},
 		concat: {
 			javascript: {
 				src:[
-          'vendor/jquery-1.9.1.js',
-          'vendor/handlebars-1.0.0-rc3.js',
-          'vendor/ember-1.0.0-rc2.js',
+          'vendor/jquery-2.0.3.js',
+          'vendor/handlebars-1.0.0-rc.4.js',
+          'vendor/ember-1.0.0-rc.6.1.js',
+          'vendor/ember-data-0.13.js',
           'vendor/bootstrap.3-rc1.js',
-          'src/app/app.js',
           'tmp/templates.js',
+          'src/app/app.js',
+          'src/app/routes/*.js',
           'src/app/controllers/*.js',
-          'src/app/views/*.js',
-          'src/app/routes/*.js'
+          'src/app/models/*.js',
+          'src/app/views/*.js'
         ],
 				dest:'build/js/app.js'
 			},
@@ -137,8 +141,8 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			scripts: {
-				files: ['vendor/*.js','src/app/*.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js','src/less/*.less','src/app/templates/*.hbs', 'src/tests/*.js'],
-				tasks: ['jshint','ember_handlebars', 'less', 'concat', 'copy', 'clean:afterBuild', 'test'],
+				files: ['vendor/*.js','src/app/*.js','src/app/models/*.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js','src/less/*.less','src/app/templates/*.hbs', 'src/tests/*.js'],
+				tasks: ['build','ember_handlebars', 'less', 'concat', 'copy', 'clean:afterBuild', 'test'],
 				options: {
 					debounceDelay:300
 				}
