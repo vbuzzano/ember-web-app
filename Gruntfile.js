@@ -141,7 +141,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			scripts: {
-				files: ['vendor/*.js','src/app/*.js','src/app/models/*.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js','src/less/*.less','src/app/templates/*.hbs', 'src/tests/*.js'],
+        files: ['vendor/*.js','src/app/*.js','src/app/index.html','src/app/models/*.js','src/app/controllers/*.js','src/app/views/*.js','src/app/routes/*.js','src/less/*.less','src/app/templates/*.hbs', 'src/tests/*.js'],
 				tasks: ['build','ember_handlebars', 'less', 'concat', 'copy', 'clean:afterBuild', 'test'],
 				options: {
 					debounceDelay:300
