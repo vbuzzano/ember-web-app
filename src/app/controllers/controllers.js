@@ -1,7 +1,13 @@
-/*
-	This is a sample definition of our About controller.  
-	If you don't need to extend this, erase it, as it is automatically created for you. */
-
-App.AboutController = Ember.ObjectController.extend({
-	
+/**
+ * Application Controller
+ */
+App.ApplicationController = Ember.Controller.extend({
+  
+  /**
+   * Application init
+   */
+  init: function() {
+    'use strict';
+    // Your application init goes here
+  }
 });

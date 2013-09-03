@@ -52,10 +52,10 @@ module.exports = function(grunt) {
 			javascript: {
 				src:[
           'vendor/jquery-2.0.3.js',
-          'vendor/handlebars-1.0.0-rc.4.js',
-          'vendor/ember-1.0.0-rc.6.1.js',
-          'vendor/ember-data-0.13.js',
-          'vendor/bootstrap.3-rc1.js',
+          'vendor/handlebars-1.0.0.js',
+          'vendor/ember-1.0.0.js',
+          'vendor/ember-data-1.0.0-beta-1.js',
+          'vendor/bootstrap.3.0.0.js',
           'tmp/templates.js',
           'src/app/app.js',
           'src/app/routes/*.js',
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 			},
       stylesheet: {
         src:[
-          'vendor/bootstrap.3-rc1.css',
+          'vendor/bootstrap.3.0.0.css',
           'tmp/style.css'
         ],
         dest:'build/css/style.css'
