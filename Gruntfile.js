@@ -68,6 +68,7 @@ module.exports = function(grunt) {
       stylesheet: {
         src:[
           'vendor/bootstrap-3.0.0.css',
+          'vendor/bootstrap-theme-3.0.0.css',
           'tmp/style.css'
         ],
         dest:'build/css/style.css'
